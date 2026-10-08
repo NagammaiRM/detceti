@@ -12,10 +12,10 @@ run, or a founder confirmation — not when it "should work."
 | Item | State | Evidence |
 |---|---|---|
 | Repo inventory | IMPLEMENTED | This repo's `docs/phase0-inventory.md` |
-| Live spreadsheet inventory | PROPOSED | Blocked on Drive access |
-| Live Apps Script inventory | PROPOSED | Blocked on network policy + Drive access |
+| Live spreadsheet inventory | **TESTED** | Real tab/row content pulled via Drive `read_file_content`, findings in `docs/phase0-inventory.md` Section 2 — includes concrete deviations from the spec (undocumented tab, missing grant entry, exposed secret) |
+| Live Apps Script inventory | PROPOSED | `GET` on the web app confirmed working; `POST` confirmed broken from this environment (unresolved root cause); actual source code still not pulled — no Apps Script API/clasp access yet |
 | Backup plan | IMPLEMENTED | `docs/backup-recovery-plan.md` (plan only, not executed) |
-| Backup executed | PROPOSED | — |
+| Backup executed | PROPOSED | A snapshot read happened, not a durable export — still open |
 | Risk register | IMPLEMENTED | `docs/risk-register.md` |
 | Resource ledger | IMPLEMENTED | `docs/resource-ledger.md` |
 

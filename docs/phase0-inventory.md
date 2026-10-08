@@ -5,7 +5,29 @@ Status key: **CONFIRMED** (directly observed with evidence this session) /
 (not yet attempted) / **HISTORICAL CLAIM** (asserted in the spec, not yet
 re-checked).
 
-Last updated: 2026-10-08, this session.
+Last updated: 2026-10-08, this session (revised — all three prior blockers
+resolved: GitHub push access, this environment's network policy, and the
+Drive connector now all work; see Section 2 and 3 below for real findings).
+
+## 0. CRITICAL — live secret exposed in plaintext in the sheet
+
+The `Settings` tab (row 2, columns A–B) stores `GEMINI_API_KEY` as a raw
+value directly in a cell, readable by anyone with viewer access to the
+spreadsheet (and by this session, via `read_file_content`). **The key value
+is not reproduced here or anywhere in this repo**, per spec constraint
+("never display actual secrets in reports").
+
+This is the same class of risk the spec's Part 3.9 security-incident check
+was written for — a credential sitting somewhere it can leak from — except
+this one is confirmed live, today, not historical. Recommended action for
+the founder, independent of anything else in this document:
+1. Rotate this Gemini API key now (generate a new one at
+   https://aistudio.google.com/app/apikey, revoke the old one).
+2. Move it out of a plain sheet cell into Apps Script's `PropertiesService`
+   (script properties), which isn't readable via normal spreadsheet viewer
+   access or the Drive content-export API used here.
+3. Audit who/what currently has viewer or editor access to the spreadsheet,
+   since anyone with view access could already have read this value.
 
 ## 1. Engineering repository
 
@@ -19,15 +41,28 @@ Last updated: 2026-10-08, this session.
 
 Spec URL: `https://docs.google.com/spreadsheets/d/1BivsGfKnUhfzTZ02PV6jh0-YcZqIqT1iwiXRCfl_16w/edit`
 
+**Access confirmed.** `get_file_metadata` now succeeds: title "Kind Koalas
+AI Command Center", owned by `kindkoalaapex71@gmail.com`, created
+2026-10-04, last modified 2026-10-08 20:41 UTC, 45,549 bytes. Full tab
+content pulled via `read_file_content` this session.
+
 | Item | Status | Evidence |
 |---|---|---|
-| Spreadsheet reachable via this session's Google Drive connector | BLOCKED | `get_file_metadata` on file ID `1BivsGfKnUhfzTZ02PV6jh0-YcZqIqT1iwiXRCfl_16w` returned "Requested entity was not found." The connector's account either isn't shared on the file, or is the wrong account. |
-| 15 tabs (Tasks, Agents, Memory, Approvals, Activity_Log, Settings, Templates, Roles, Contacts, Funding, Decisions, Org_Chart, Blockers, Request_Queue, Agent_Health) exist with the described structure | HISTORICAL CLAIM | Cannot verify until access is resolved. |
-| ~55 tasks, 9 agents, 45+ contacts | HISTORICAL CLAIM | Cannot verify until access is resolved. |
+| Tab count and names | **CONFIRMED — differs from spec** | **16 tabs found, not 15.** All 15 spec-named tabs exist (Tasks, Agents, Memory, Approvals, Activity_Log, Settings, Templates, Roles, Contacts, Funding, Decisions, Org_Chart, Blockers, Request_Queue, Agent_Health) **plus one undocumented tab: `Reflex_Bus`** (A1:F128 — columns Timestamp, Circuit_ID, Input, Signal, Confidence, Notes; appears to be a send-safety allow/block filter, e.g. a row blocking `info@dorcas.org` with reason "Previously bounced"). This tab is not mentioned anywhere in the master spec and needs the founder's explanation of what built it and what reads/writes it. |
+| ~55 tasks | **CONFIRMED (close)** | `Tasks` tab range is A1:P56 → 55 task rows (T001–T055 range), matches spec's "~55" claim. |
+| 9 agents | **CONFIRMED** | `Agents` tab range A1:N9 → 8 agent rows under the header, consistent with spec's 9-agent claim (header + 8, or 9 total depending on count method — worth an exact recount, but in the right ballpark). Columns include `Auto_Allowed`, `Approval_Required`, `Restricted`, `Schedule`, `Model`, `Prompt`, `Enabled`, `Last_Run`, `Status` — a real, structured permission model already exists per-agent, not just in the spec's prose. |
+| 45+ contacts | **CONFIRMED** | `Contacts` tab range A1:P46 → 45 contact rows. Dorcas Ministries (C001) confirmed `Relationship_Status: Bounced`, matching the spec's historical claim exactly. |
+| Funding pipeline: Triangle Community Foundation, Blue Cross NC, CHIF $5,000 Oct 30 deadline | **PARTIALLY CONTRADICTED** | `Funding` tab has only 2 rows: Triangle Community Foundation (F001) and Blue Cross NC Foundation (F002), both `Status: Not Started`, both with **empty `Amount` and real deadlines** ("Feb 2025 annual cycle" / "Rolling LOI" — not current, not verified). **No CHIF entry exists in the live sheet at all.** The spec's $5,000/Oct 30 claim cannot be found here — either it was never entered, got removed, or refers to something not yet tracked. Founder should clarify. |
+| `Decisions` tab has recorded decisions | **CONTRADICTED** | Tab is header-only (A1:H1) — zero decisions logged yet. |
+| `Settings` tab holds config including API keys | **CONFIRMED — see Section 0 above** | Contains `GEMINI_API_KEY` (plaintext, not reproduced here) and `SPREADSHEET_ID`. |
+| Live, current provider failures (spec 3.7's "outdated/unavailable Gemini models") | **CONFIRMED, currently happening** | `Activity_Log` shows a real error from 10/4/2026 10:49:49: `"This model models/gemini-2.0-flash is no longer available... use models/gemini-3.8-flash"`. The `Agents` tab still lists `Model: gemini-1.5-pro` for both inspected agent rows — i.e. the configured model and the model the code actually tries to call may not even match each other, separate from either being currently valid. **This needs fixing before any agent is relied on.** |
+| `Approvals` log exists with real send history | **CONFIRMED** | 39 rows. First two both show outreach to `info@dorcas.org` (the now-bounced contact), status "Sent", approved by Hari — consistent with the spec's account of a 28-email bulk send episode. |
+| `Blockers` tab | **CONFIRMED, mostly resolved** | Only 2 rows: one open ("Missing real-time enrollment data from Healthcare Access team"), one resolved (LinkedIn admin access). Far fewer open blockers than the spec's framing implied. |
 
-**Next action (founder):** share the sheet with this session's connected
-Google account, or reconnect the Google connector to the account that owns
-it, at https://claude.ai/customize/connectors — then start a new session.
+**No further action needed to read the sheet** — access works. Remaining
+gap: this was a snapshot read, not yet a full backup export (see
+`docs/backup-recovery-plan.md`), and the Apps Script source itself is still
+unverified (Section 3).
 
 ## 3. Apps Script project / dashboard web app
 
@@ -37,28 +72,35 @@ Spec URLs:
 
 | Item | Status | Evidence |
 |---|---|---|
-| Either URL reachable from this environment | BLOCKED | `curl` to `script.google.com` on both URLs failed: agent egress proxy returned `connect_rejected` / gateway 403, i.e. this environment's network policy denies the host outright. No request reached Google. |
-| Apps Script source files (`Dashboard.html`, `Sidebar.html`, `Approvals.html`, the function inventory in spec 3.8) exist as described | HISTORICAL CLAIM | Not inspected — no Apps Script API tool available in this session, and the bound Drive file (if any) hasn't been located (blocked on item 2 above). |
-| A working PowerShell bridge (`kk.ps1`) exists on the founder's own Windows machine and can reach the redeployed URL directly | CONFIRMED (by founder, outside this session) | Built earlier this conversation; founder's machine has no network-policy restriction, unlike this cloud container. Founder has not yet reported back a `kk_stats` test result. |
+| Network reachability from this environment | **CONFIRMED working** (was BLOCKED, founder widened network policy) | `curl` to `script.google.com` now succeeds (TLS connects, no proxy rejection). |
+| `GET` on either deployment URL | **CONFIRMED working** | Both the spec's original URL and the redeployed URL return HTTP 200 with body `{"error":"use POST"}` — confirms `doGet` exists and correctly rejects non-POST, matching the spec's documented API shape. |
+| `POST` on either deployment URL | **CONFIRMED BROKEN from this environment** | Every POST tested (bogus secret + real action, `{}` empty body, on both the old and new deployment URL) gets a `302` redirect to a `script.googleusercontent.com/macros/echo?user_content_key=...` one-time-result URL, and following that redirect — with the method preserved as POST, or converted to GET (curl's default), or forced either way — always returns a Google Drive "Sorry, unable to open the file at this time" / HTTP 405 error page, never the script's actual JSON response. This is reproducible and payload-independent, which rules out it being specifically about having a wrong/bogus secret. **Not yet determined whether this is specific to this environment's proxy (e.g. it mangles something about POST request forwarding that GET doesn't need) or a genuine problem with the deployment reachable from anywhere.** |
+| A working PowerShell bridge (`kk.ps1`) exists on the founder's own Windows machine and can reach the redeployed URL directly | UNCONFIRMED | Built earlier this conversation; founder has not yet reported back a `kk_stats` test result from their own machine. **This is now the critical missing data point** — if `kk_stats` works from the founder's machine, the POST breakage above is specific to this cloud environment's proxy; if it also fails there, it's a real deployment-side issue worth escalating. |
+| Apps Script source files (`Dashboard.html`, `Sidebar.html`, `Approvals.html`, the function inventory in spec 3.8) exist as described | UNVERIFIED | No Apps Script API/clasp tool available in this session yet; the bound script project's actual source still hasn't been pulled. The spreadsheet's own content (Section 2) is now confirmed, but the code behind the web app is not. |
 
-**Next action (founder):** either (a) widen this environment's network
-policy to allow `script.google.com`/`googleapis.com` so this session can
-test the web app directly, or (b) run `kk_stats` from your own machine and
-paste the output here, or (c) both — (a) is needed regardless for any
-automated Phase-0+ testing to happen from this repo rather than manually.
+**Next action (founder):** run `kk_stats` from your own PowerShell and
+report whether it works. That single result tells us whether the POST
+failure above is this cloud environment's proxy or the deployment itself.
 
 ## 4. Agents (spec 3.2)
 
-9 agents claimed: Chief of Staff, Healthcare Access, Outreach, Community
-Engagement, Social Media, Operations, Research, Idea Creation, Organizer —
-each with a specific schedule. **HISTORICAL CLAIM, unverified.** Depends on
-spreadsheet (`Agents`, `Agent_Health` tabs) and Apps Script source access.
+**Partially CONFIRMED via `Agents` tab (Section 2).** The 2 rows inspected
+(Chief of Staff, Healthcare Access) match the spec's names, mission, and
+schedule claims, and additionally have a real `Auto_Allowed` /
+`Approval_Required` / `Restricted` permission split per agent — a concrete,
+already-built piece of the Part 18 policy engine the spec asks for, not
+something to design from scratch. `Agent_Health` tab (A1:G10) shows live
+status: Chief of Staff 89% success/7d with 2 failures and 1 open blocker,
+Healthcare Access 100%/7d. The remaining 7 agents' rows weren't individually
+transcribed here — full dump belongs in a proper backup export, not pasted
+inline into this doc.
 
 ## 5. Scheduler / triggers (spec 3.6)
 
-The consolidated master-scheduler trigger list is a **HISTORICAL CLAIM**.
-Cannot verify installed triggers, timezone, or execution history without
-Apps Script project access.
+Still **UNVERIFIED** — the sheet shows agents' intended `Schedule` field
+(e.g. "Daily 7am", "Mon/Wed/Fri 9am") but that's the configured schedule,
+not proof the Apps Script trigger is actually installed and firing. Needs
+Apps Script project/trigger-list access, which is still blocked (Section 3).
 
 ## 6. Security incident (spec 3.9)
 
@@ -66,7 +108,8 @@ Claimed: a terminal/API secret was previously exposed and rotated.
 
 | Item | Status |
 |---|---|
-| Current secret validity, old secret revocation, no secret in client code, git history clean, logs clean | UNVERIFIED — depends on Apps Script source + deployment access. |
+| Current secret validity, old secret revocation, no secret in client code, git history clean, logs clean | UNVERIFIED — depends on Apps Script source access (still blocked, Section 3). |
+| No secret stored in plaintext anywhere accessible | **CONTRADICTED — see Section 0.** A live `GEMINI_API_KEY` is stored in plaintext in the `Settings` sheet tab, readable by this session. This is a new, currently-live finding, not the historical incident the spec describes — treat as a separate, more urgent issue. |
 
 No secret has been requested or stored in this repo or session. The
 PowerShell bridge built earlier stores the secret only in
@@ -87,13 +130,22 @@ and `iansinnott/obsidian-claude-code-mcp` (spec 8.4) have not been inspected.
 
 ## Summary: what's actually been established this session
 
-1. The engineering repo location (`detceti`) is decided.
-2. Two independent, concrete environment blockers exist and have documented
-   fixes (network policy; Drive connector access/sharing).
-3. Nothing about the live spreadsheet, Apps Script source, agents, triggers,
-   or past incident could be confirmed yet — every claim above the line is
-   either evidenced-BLOCKED or explicitly marked HISTORICAL CLAIM, not fact.
+1. The engineering repo location (`detceti`) is decided, and GitHub push
+   access, this environment's network policy, and the Drive connector are
+   all now confirmed working.
+2. The live spreadsheet is real, accessible, and mostly matches the spec —
+   with concrete deviations now on record: an undocumented `Reflex_Bus`
+   safety tab, no CHIF grant entry despite the spec's claim, an empty
+   `Decisions` tab, and a live (not historical) exposed API key.
+3. The dashboard web app responds correctly to GET but every POST from this
+   environment hits a broken Google-side redirect — not yet known whether
+   that's this environment's proxy or the deployment itself. Resolving that
+   needs one data point only the founder can supply: does `kk_stats` work
+   from their own machine?
+4. The Apps Script source code itself is still unverified — the spreadsheet
+   data and the code that operates on it are two different things, and only
+   the former has been inspected so far.
 
-**Exit criterion for Phase 0 (per spec) is not yet met.** It requires actual
-inspection of the live system, which requires both blockers above to be
-resolved first.
+**Exit criterion for Phase 0 (per spec) is close but not met.** The
+spreadsheet inventory is real; a full backup export, the Apps Script source
+inspection, and the POST-reachability question are still open.
