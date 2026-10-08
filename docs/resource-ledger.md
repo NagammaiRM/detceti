@@ -41,6 +41,23 @@ batches when the relevant phase (per spec Part 25) is actually reached —
 not inspected speculatively now, to avoid burning time on repos that may
 never be needed.
 
+## Skill/resource indexes (founder-supplied, post-Phase-0)
+
+Not named in the original spec; supplied afterward. Both are large curated
+*indexes* of links — not installable code, not an MCP server, not an agent
+framework. Their value is as the "search existing skills / approved
+resource index" step the spec requires in Part 7.3 before building any new
+skill from scratch, and as a source to check during Phase 1 skill-building
+(spec 6.3) and Phase 6 (SkillOpt).
+
+| Resource | Inspected | Finding | Decision |
+|---|---|---|---|
+| [hesreallyhim/awesome-claude-code](https://github.com/hesreallyhim/awesome-claude-code) | Yes — README fetched this session | Hand-curated list of Claude Code resources: skills, agents, status lines, dev tooling, plugins. Data-driven (`THE_RESOURCES_TABLE_NEW.csv`, generator scripts). ~2,026 commits, 55.3k stars, 4.8k forks, ~1.2k open issues. External contributions go through issues, not direct PRs. License file present, type not confirmed from the page. | **ADOPT as a search index** — consult it whenever Part 7.3 says "search existing skills/resource index" before writing a new skill, especially for Phase 1's Apps Script / Sheets / Gmail / dashboard skills. Not installing anything from it yet — it's a catalog, each entry needs its own inspection before use. |
+| [VoltAgent/awesome-agent-skills](https://github.com/VoltAgent/awesome-agent-skills) | Yes — README fetched this session (first ~100k chars; not fully read) | 1000+ agent skills indexed by publisher (Anthropic official skills, OpenAI, Google Gemini, Cloudflare, Microsoft/Azure — 133 skills, Supabase, MongoDB, Redis, Firebase, Angular, Expo, Flutter, WordPress, Trail of Bits security skills, Sentry, Datadog, SerpApi, Firecrawl, Browserbase, marketing/PM categories, etc.). MIT licensed. 742 commits, 35.4k stars, 3.8k forks, 41 open PRs, 1,497+ skills counted. Compatible across Claude Code, Codex, Gemini CLI, Cursor. Individual skills are hosted externally (officialskills.sh or their own repos) — this repo is purely the index. | **ADOPT as a search index**, same basis as above. Particularly relevant for Phase 9 (research/fact-checking — Firecrawl/Browserbase/SerpApi entries) and Phase 10 (any design/content skills) once those phases are reached. No individual skill from it has been inspected or installed. |
+
+Neither entry changes Phase 0 status: still blocked on live sheet/Apps
+Script access regardless of what skills exist to borrow from later.
+
 ## API / provider resources (spec 9, 23.2)
 
 | Provider | Verified free tier (this session)? | Decision |
