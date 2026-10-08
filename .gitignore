@@ -1,0 +1,24 @@
+# Secrets — never commit these
+*.env
+.env*
+**/config.local.json
+**/*secret*
+**/*.key
+**/*token*
+.kk-bridge/
+
+# OS / editor noise
+.DS_Store
+Thumbs.db
+*.swp
+
+# Build artifacts
+node_modules/
+dist/
+build/
+*.log
+
+# Local spreadsheet/data exports (contain contact/family data — never commit)
+*.xlsx
+*.csv
+backups/
