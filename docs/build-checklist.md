@@ -13,7 +13,7 @@ run, or a founder confirmation — not when it "should work."
 |---|---|---|
 | Repo inventory | IMPLEMENTED | This repo's `docs/phase0-inventory.md` |
 | Live spreadsheet inventory | **TESTED** | Real tab/row content pulled via Drive `read_file_content`, findings in `docs/phase0-inventory.md` Section 2 — includes concrete deviations from the spec (undocumented tab, missing grant entry, exposed secret) |
-| Live Apps Script inventory | PROPOSED | `GET` on the web app confirmed working; `POST` confirmed broken from this environment (unresolved root cause); actual source code still not pulled — no Apps Script API/clasp access yet |
+| Live Apps Script inventory | **TESTED (partial)** | `GET`/`POST` behavior tested against the live URL (Section 3); full server-side source (`Code.gs`) received and reviewed — but found to likely NOT match what's actually deployed (see risk R12). `Dashboard.html`/`Sidebar.html`/`Approvals.html` still not received. |
 | Backup plan | IMPLEMENTED | `docs/backup-recovery-plan.md` (plan only, not executed) |
 | Backup executed | PROPOSED | A snapshot read happened, not a durable export — still open |
 | Risk register | IMPLEMENTED | `docs/risk-register.md` |

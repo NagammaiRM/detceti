@@ -1,16 +1,13 @@
 # Apps Script
 
-Will hold a synchronized copy of the live Apps Script project source (the
-function groups listed in `docs/MASTER_SPEC.md` Part 3.8: core settings, AI
-provider adapters, Safe Mode/sending, agents, email/replies, research,
-approvals, orchestration, operations, agent coordination, system health,
-Obsidian bridge, setup/maintenance).
+`Code.gs` — the Kind Koalas AI Command Center source, received verbatim
+from the founder on 2026-10-09, labeled "v5.0" in its own header comment.
 
-**Empty — blocked.** This session's Google Drive connector cannot see the
-Command Center spreadsheet/bound script project (see
-`docs/phase0-inventory.md`), and this environment's network policy blocks
-`script.google.com` outright, so there is currently no way to pull the real
-source from here. Do not write speculative reimplementations of these
-functions until the real source has been inspected — the spec is explicit
-that historical descriptions of these functions are claims to verify, not
-specifications to build from scratch.
+**Read `SOURCE_NOTES.md` before trusting this as what's actually live.**
+Two concrete discrepancies were found against this session's own testing
+of the deployed dashboard URL — this file may be a newer draft, not what's
+currently deployed.
+
+`Dashboard.html`, `Sidebar.html`, `Approvals.html` — referenced by the
+code (`HtmlService.createHtmlOutputFromFile(...)`) but not yet supplied.
+Still needed for a complete picture of the deployed project.
