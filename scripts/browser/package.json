@@ -1,0 +1,14 @@
+{
+  "name": "detceti-browser",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Playwright browser automation for Kind Koalas Apex / COCO — grant portals and other no-API sites. Fills forms; never submits without a human.",
+  "type": "module",
+  "scripts": {
+    "smoke-test": "node smoke-test.js",
+    "map-form": "node map-form.js"
+  },
+  "devDependencies": {
+    "playwright": "^1.64.0"
+  }
+}
