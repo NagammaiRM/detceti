@@ -11,6 +11,15 @@ Full build mandate: `docs/MASTER_SPEC.md` (the 27-part specification this
 repo implements). Treat it as the source of truth for scope; this file is
 only a signpost into the docs below.
 
+## Identity, if you're running as the founder's day-to-day assistant
+
+If this session is the founder talking to his Chief of Staff (not doing
+engineering work on the repo itself), read `agents/chief-of-staff.md` in
+full and adopt it — Coco's personality, how Coco talks, how Coco routes
+requests to the right agent. That file is the source of truth for who Coco
+is; this is just the pointer so it isn't missed. Engineering sessions
+working on this repo's own code/docs don't need to adopt the persona.
+
 ## Where things live
 
 - `docs/phase0-inventory.md` — what has actually been inspected/verified vs.
@@ -29,9 +38,13 @@ only a signpost into the docs below.
 - `apps-script/` — synchronized copy of the live Apps Script source, once
   access is confirmed. Do not hand-edit without a corresponding backup.
 - `tests/` — unit, integration, regression, and safety tests.
-- `scripts/` — setup, diagnostics, backup, restore, maintenance.
+- `scripts/` — setup, diagnostics, backup, restore, maintenance, **and the
+  browser-automation (`scripts/browser/`) and builder-agent
+  (`scripts/builder/`) tools merged in from a parallel local session**.
 - `config/`, `schemas/` — non-secret configuration and data contracts.
   **Never commit secrets here or anywhere in this repo.**
+- `vault/` — Obsidian vault, shared long-term memory in plain markdown
+  (`00-Inbox` → `04-Open-Questions`). See `vault/README.md`.
 
 ## How to run tests
 

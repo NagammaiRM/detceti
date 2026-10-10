@@ -1,16 +1,34 @@
 # Secrets — never commit these
 *.env
 .env*
+!.env.example
 **/config.local.json
 **/*secret*
 **/*.key
 **/*token*
+*.pem
+credentials.json
+.clasprc.json
 .kk-bridge/
 
 # OS / editor noise
 .DS_Store
 Thumbs.db
+desktop.ini
 *.swp
+
+# builder agent: approved/rejected proposal content is local workflow
+# state, not source — keep the .gitkeep markers so the 3-stage layout is
+# still visible on a fresh clone, but don't track what lands inside them
+scripts/builder/approved/*
+!scripts/builder/approved/.gitkeep
+scripts/builder/rejected/*
+!scripts/builder/rejected/.gitkeep
+
+# playwright
+playwright-report/
+test-results/
+scripts/browser/.auth/
 
 # Obsidian per-machine workspace state (not content)
 vault/.obsidian/workspace.json
