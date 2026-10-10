@@ -12,6 +12,11 @@
 Thumbs.db
 *.swp
 
+# Obsidian per-machine workspace state (not content)
+vault/.obsidian/workspace.json
+vault/.obsidian/workspace-mobile.json
+vault/.obsidian/cache
+
 # Build artifacts
 node_modules/
 dist/
