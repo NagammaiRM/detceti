@@ -21,17 +21,16 @@ was asked."
       get added via `add_repo`.
 - [ ] **Rotate the Gemini API key** (founder action — AI Studio + Settings
       tab, see prior message) — not yet confirmed done
-- [ ] **Confirm whether the pasted Apps Script v5.0 source is what's
-      actually deployed** — found a real discrepancy (see
-      `docs/phase0-inventory.md` Section 3) between this source's `doGet`
-      behavior and what the live dashboard URL actually returned when
-      tested
-- [ ] **Run `kk_stats` successfully from PowerShell** — blocked: the
-      `~/.kk-bridge/` folder/files were never actually saved on the
-      founder's machine (see chat — `kk.ps1` wasn't found at
-      `C:\Users\sokku\.kk-bridge\kk.ps1`)
-- [ ] Decide what to do about the hardcoded placeholder `API_SECRET =
-      'CHANGE_ME_TO_RANDOM_STRING_32CHARS'` found in the pasted source —
-      critical if that literal placeholder is still what's live
+- [x] **Confirm whether the pasted Apps Script v5.0 source is what's
+      actually deployed** — `doPost`/`api_stats()` now confirmed matching
+      exactly (real `kk_stats` response shape proves it); `doGet` match
+      still open but low-priority, see `docs/phase0-inventory.md` Section 3
+- [x] **Run `kk_stats` successfully from PowerShell** — done 2026-10-10,
+      returns real live task/approval/contact data
+- [x] Decide what to do about the hardcoded placeholder `API_SECRET` —
+      regenerated via `generateApiSecret()` and redeployed; confirmed live
+      via working `kk_stats`
+- [ ] Consolidate the local Claude Code session's separate vault/work into
+      this repo — instructions given 2026-10-09, not yet confirmed done
 - [ ] Explain Fly Brain integration when ready — founder said "ignore for
       now," so it's parked, not investigated, not built on
